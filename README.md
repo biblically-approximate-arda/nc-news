@@ -1,8 +1,7 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
-
-
+To link to your database, create .env in be-nc-news with the following line:
+PGDATABASE = your_db_name 
 
 --- 
 
