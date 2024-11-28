@@ -86,3 +86,30 @@ describe("GET /api/articles", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an array of all comments on an article sorted by most recent", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments[0]).toEqual(
+          expect.objectContaining({
+            body: expect.any(String),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            article_id: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        )
+      })
+  })
+  test("404: Responds with a 'Not found' message for a nonexistent article", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({text}) => {
+        expect(text).toBe("Article not found")
+      })
+  })
+});

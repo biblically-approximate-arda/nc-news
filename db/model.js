@@ -12,10 +12,23 @@ module.exports.fetchArticles = function() {
   return db.query("SELECT * FROM articles ORDER BY created_at DESC;")
 }
 
-module.exports.fetchCommentsByArticle = function(id) {
-  const sql = `SELECT * FROM comments WHERE article_id = ${id};`
+module.exports.fetchCommentsByArticle = function(id, internal = false) {
+  const sql = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`
   //console.log(sql)
-  return db.query(sql)
+  if (/^\d+$/.test(id)) {
+    //console.log(id)
+    if (!internal) {
+      return db.query("SELECT * FROM articles WHERE article_id = $1;", [id])
+      .then(({rows}) => {
+        if (rows.length) {
+          return db.query(sql, [id])
+        } else {
+          return Promise.reject({status: 404, msg:"Article not found"})
+      }
+      })
+    } else return db.query(sql, [id])
+  } else 
+    return Promise.reject({status: 500, msg:"Invalid article ID"})
 }
 
 module.exports.articleComments = function() {

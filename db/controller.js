@@ -26,7 +26,7 @@ module.exports.getArticles = function(req, res) {
     })
     const commentLists = []
     for (let i in articlesById) {
-      commentLists[i] = model.fetchCommentsByArticle(i)
+      commentLists[i] = model.fetchCommentsByArticle(i, true)
     }
     Promise.all(commentLists).then((commentListsRes) => {
       for (let i in articlesById) {
@@ -34,5 +34,15 @@ module.exports.getArticles = function(req, res) {
       }
       res.status(200).send({articles: rows})
     })
+  })
+}
+
+module.exports.getCommentsByArticle = function(req, res) {
+  model.fetchCommentsByArticle(req.params.article_id)
+  .then(({rows}) => {
+    res.status(200).send({comments: rows})
+  })
+  .catch((err) => {
+    res.status(err.status).send(err.msg) 
   })
 }
