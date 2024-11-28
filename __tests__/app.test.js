@@ -38,7 +38,6 @@ describe("GET /api/topics", () => {
   });
 });
 
-
 describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an object containing all details of the article with the given ID", () => {
     return request(app)
@@ -55,6 +54,33 @@ describe("GET /api/articles/:article_id", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String)
+          })
+        )
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("200: Responds with an array of all articles sorted by most recent, including comment counts but not bodies", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles[0]).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number)
+          })
+        )
+        expect(articles[0]).not.toEqual(
+          expect.objectContaining({
+            body: expect.anything()
           })
         )
       });
