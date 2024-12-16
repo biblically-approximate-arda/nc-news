@@ -43,6 +43,43 @@ module.exports.getCommentsByArticle = function(req, res) {
     res.status(200).send({comments: rows})
   })
   .catch((err) => {
+    console.log(err)
+    res.status(err.status).send(err.msg) 
+  })
+}
+
+module.exports.postComment = function(req, res) {
+  model.postComment(req.params.article_id, req.body)
+  .then(({rows}) => {
+    res.status(200).send({comment: {
+      body: rows[0].body,
+      username: rows[0].author
+    }})
+  })
+  .catch((err) => {
+    console.log(err)
+    res.status(err.status).send(err.msg) 
+  })
+}
+
+module.exports.patchArticle = function(req, res) {
+  model.voteArticle(req.params.article_id, req.body.inc_votes)
+  .then(({rows}) => {
+    res.status(200).send(rows)
+  })
+  .catch((err) => {
+    console.log(err)
+    res.status(err.status).send(err.msg) 
+  })
+}
+
+module.exports.deleteComment = function(req, res) {
+  model.delComment(req.params.comment_id)
+  .then(() => {
+    res.status(204).send()
+  })
+  .catch((err) => {
+    console.log(err)
     res.status(err.status).send(err.msg) 
   })
 }
